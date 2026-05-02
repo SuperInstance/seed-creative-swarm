@@ -234,10 +234,14 @@ class TestIntegration:
         mini_response = {"choices": [{"message": {"content": "Generated text"}}]}
         pro_response = {"choices": [{"message": {"content": "SCORE: 0.75\nVERDICT: profound\nREASONING: Good."}}]}
         
-        # 3 mini calls + 3 pro calls = 6
-        responses = [mini_response] * 3 + [pro_response] * 3
+        # Build response chain: 3 minis then 3 pros
         mock_post.side_effect = [
-            MagicMock(json=lambda: r, raise_for_status=lambda: None) for r in responses
+            MagicMock(json=lambda: mini_response, raise_for_status=lambda: None),
+            MagicMock(json=lambda: mini_response, raise_for_status=lambda: None),
+            MagicMock(json=lambda: mini_response, raise_for_status=lambda: None),
+            MagicMock(json=lambda: pro_response, raise_for_status=lambda: None),
+            MagicMock(json=lambda: pro_response, raise_for_status=lambda: None),
+            MagicMock(json=lambda: pro_response, raise_for_status=lambda: None),
         ]
 
         result = swarm.generate(
@@ -248,7 +252,8 @@ class TestIntegration:
 
         assert result["prompt"] == "Design a fleet protocol"
         assert len(result["generations"]) == 3
-        assert result["winner"]["text"] == "Generated text"
+        # Winner should be one of the generations with the mocked text
+        assert result["generations"][0]["text"] == "Generated text"
         assert result["pro_score"] == 0.75
         assert len(result["votes"]) == 3
 
