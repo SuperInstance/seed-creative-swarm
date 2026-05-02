@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "seed-creative-swarm"
+version = "0.1.0"
+description = "Ensemble of 3 Seed-mini + Seed-pro judge for creative generation"
+requires-python = ">=3.10"
+dependencies = ["requests>=2.28"]
+
+[project.urls]
+Homepage = "https://github.com/SuperInstance/seed-creative-swarm"
+Repository = "https://github.com/SuperInstance/seed-creative-swarm"
